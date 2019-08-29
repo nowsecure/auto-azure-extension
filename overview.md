@@ -1,4 +1,21 @@
 ## Azure Extension for NowSecure Auto API
+This plugin adds the ability to perform automatic mobile app security testing for Android and iOS mobile apps through the NowSecure AUTO test engine.
+
+### Summary:
+Purpose-built for mobile app teams, NowSecure AUTO provides fully automated, mobile appsec testing coverage (static+dynamic+behavioral tests) optimized for the dev pipeline. Because NowSecure tests the mobile app binary post-build from CircleCI, it can test software developed in any language and provides complete results including newly developed code, 3rd party code, and compiler/operating system dependencies. With near zero false positives, NowSecure pinpoints real issues in minutes, with developer fix details, and routes tickets automatically into ticketing systems, such as Jira. NowSecure is frequently used to perform security testing in parallel with functional testing in the dev cycle. Requires a license for and connection to the NowSecure AUTO software. https://www.nowsecure.com
+
+## Job Parameters
+Following are parameters needed for the job:
+- token: mandatory parameter for API token. visit https://docs.nowsecure.com/auto/integration-services/jenkins-integration to generate token. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
+- file: mandatory parameter to specify mobile binary.
+- url: optional parameter for nowsecure auto API URL with default value of https://lab-api.nowsecure.com
+- group: optional parameter for group-id.
+- waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
+- showStatusMessages: Specify flag to show status messages from automation testing
+
+### Access token
+Generate token as described on https://docs.nowsecure.com/auto/integration-services/jenkins-integration.
+
 
 ### Installation
 
@@ -48,6 +65,12 @@ steps:
     showStatusMessages: true
     score: 75
     token: 'xxxxx'
+```
+Note: "task: azure-nowsecure-auto-security-test@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
+
+#### Publish Artifacts
+You can add task to publish artifacts from Nowsecure security task as follows
+```
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(build.artifactStagingDirectory)'
