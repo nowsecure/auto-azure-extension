@@ -1,0 +1,98 @@
+{
+	"manifestVersion": 1,
+	"id": "azure-nowsecure-auto-security-test",
+	"name": "azure-nowsecure-auto-security-test",
+	"description": "Azure Extension for NowSecure Auto Security Test",
+	"version": "1.0.1",
+	"publisher": "Nowsecure-com",
+	"targets": [
+		{
+			"id": "Microsoft.VisualStudio.Services"
+		}
+	],
+	"tags": [
+		"mobile",
+		"dast",
+		"mast",
+		"security",
+		"plugin",
+		"nowsecure"
+	],
+	"public": true,
+	"categories": [
+		"Azure Pipelines"
+	],
+	"icons": {
+		"default": "images/extension-icon.png"
+	},
+	"files": [
+		{
+			"path": "Nowsecure"
+		},
+		{
+			"path": "images"
+		},
+		{
+			"path": "overview.md"
+		},
+		{
+			"path": "license-terms.md"
+		}
+	],
+	"contributions": [
+		{
+			"id": "azure-nowsecure-auto-security-test",
+			"type": "ms.vss-distributed-task.task",
+			"targets": [
+				"ms.vss-distributed-task.tasks"
+			],
+			"properties": {
+				"name": "Nowsecure"
+			}
+		}
+	],
+	"content": {
+		"details": {
+			"path": "overview.md"
+		},
+		"license": {
+			"path": "license-terms.md"
+		}
+	},
+	"links": {
+		"home": {
+			"uri": "https://www.nowsecure.com/"
+		},
+		"getstarted": {
+			"uri": "https://www.nowsecure.com/"
+		},
+		"learn": {
+			"uri": "https://www.nowsecure.com/"
+		},
+		"support": {
+			"uri": "https://www.nowsecure.com/"
+		},
+		"repository": {
+			"uri": "https://github.com/nowsecure/auto-azure-extension"
+		},
+		"issues": {
+			"uri": "https://github.com/nowsecure/auto-azure-extension/issues"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"uri": "https://github.com/nowsecure/auto-azure-extension"
+	},
+	"branding": {
+		"color": "rgb(34, 34, 34)",
+		"theme": "dark"
+	},
+	"screenshots": [
+		{
+			"path": "images/basic-config.png"
+		},
+		{
+			"path": "images/advanced-config.png"
+		}
+	]
+}
