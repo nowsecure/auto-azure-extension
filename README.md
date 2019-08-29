@@ -23,9 +23,9 @@ Note: It uses same core Java code that is used by the CircleCI (https://github.c
 
 ## Deploy
 ```
-  cd base-directory for this project
-  tfx extension create --manifest-globs vss-extension.json
+  cd Nowsecure && npm install && tsc;cd .. && tfx extension create --rev-version --manifest-globs vss-extension.json
 ```
+
 Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publishers/nowsecure-com?noPrompt=true
 
 ### Installation
