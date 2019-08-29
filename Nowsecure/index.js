@@ -93,10 +93,17 @@ else {
     java.arg("--auto-score");
     java.arg("0");
 }
+if (process.env.SYSTEM_DEBUG) {
+    java.arg("--debug");
+}
 java.on("stdout", function (data) {
     console.log(data.toString());
 });
 console.log(java);
+//////////////////////////////////////////////////////////////////////////
+// Starting Java app to process the app for preflight and assessment 
+// based on above config.
+//////////////////////////////////////////////////////////////////////////
 java.exec()
     .then(function (code) {
     tl.debug("code: " + code);

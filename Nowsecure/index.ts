@@ -109,6 +109,10 @@ if (score) {
   java.arg("0");
 }
 
+if (process.env.SYSTEM_DEBUG) {
+  java.arg("--debug");
+}
+
 java.on("stdout", function (data: Buffer) {
   console.log(data.toString());
 });
