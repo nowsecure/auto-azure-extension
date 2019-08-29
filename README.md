@@ -1,5 +1,7 @@
 # Azure DevOps Extension for NowSecure Auto Security Test
 
+## Marketplace: [https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.azure-nowsecure-auto-security-test]
+
 ## Development
 - install node
 - npm install -g tfx-cli
@@ -21,11 +23,21 @@ Finally, run
 ```
 Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publishers/nowsecure-com?noPrompt=true
 
-## Install
-- Go to your profile page https://dev.azure.com/{userid}/
-- Select extensions https://dev.azure.com/{userid}/_settings/extensions?tab=installed
-- If extension was shared then Install it from Shared tab otherwise Browse market place for "Azure Extension for NowSecure Auto Security Test"
+### Installation
 
+#### Find it in Azure Devops Marketplace [https://marketplace.visualstudio.com/azuredevops] using "NowSecure Security Test Extension"
+![](images/marketplace.png)
+
+Then install it as follows:
+![](images/install.png)
+
+#### Add to your Build
+
+#### Basic Config
+![](images/basic-config.png)
+
+#### Advanced Config
+![](images/advanced-config.png)
 
 ## Sample Build Pipeline for Android
 ```

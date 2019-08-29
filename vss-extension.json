@@ -38,6 +38,14 @@
             "addressable": true
         },
         {
+            "path": "images/marketplace.png",
+            "addressable": true
+        },
+        {
+            "path": "images/install.png",
+            "addressable": true
+        },
+        {
             "path": "images/extension-icon.png",
             "addressable": true
         },
@@ -104,6 +112,12 @@
         },
         {
             "path": "images/advanced-config.png"
+        },
+        {
+            "path": "images/marketplace.png"
+        },
+        {
+            "path": "images/install.png"
         }
     ]
 }

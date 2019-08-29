@@ -3,6 +3,10 @@
 ### Installation
 
 #### Find it in Azure Devops Marketplace [https://marketplace.visualstudio.com/azuredevops] using "NowSecure Security Test Extension"
+![](images/marketplace.png)
+
+Then install it as follows:
+![](images/install.png)
 
 #### Add to your Build
 
@@ -11,8 +15,6 @@
 
 #### Advanced Config
 ![](images/advanced-config.png)
-
-images/advanced-config.png	images/basic-config.png		images/extension-icon.png
 
 #### Sample Build Pipeline for Android
 ```
