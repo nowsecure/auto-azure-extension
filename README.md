@@ -30,7 +30,7 @@ Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publ
 
 ### Installation
 
-See [overview.md]
+See [Overview documentation](overview.md)
 
 
 ## References
