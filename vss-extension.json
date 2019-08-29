@@ -104,6 +104,9 @@
             "path": "images/install.png"
         },
         {
+            "path": "images/debug.png"
+        },
+        {
             "path": "images/log.png"
         }
     ]

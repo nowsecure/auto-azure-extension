@@ -115,6 +115,10 @@ java.on("stdout", function (data: Buffer) {
 
 console.log(java);
 
+//////////////////////////////////////////////////////////////////////////
+// Starting Java app to process the app for preflight and assessment 
+// based on above config.
+//////////////////////////////////////////////////////////////////////////
 java.exec()
   .then(function (code: number) {
     tl.debug("code: " + code);

@@ -58,3 +58,7 @@ steps:
 #### View Output logs
 ![](images/log.png)
 
+
+#### Debugging
+- Add variable for system.debug=true in your build to see more detailed logs, e.g.,
+![](images/debug.png)
