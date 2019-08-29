@@ -55,3 +55,6 @@ steps:
     artifactType: 'container'
 ```
 
+#### View Output logs
+![](images/logs.png)
+

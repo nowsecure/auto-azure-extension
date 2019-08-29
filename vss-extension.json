@@ -30,23 +30,7 @@
             "path": "Nowsecure"
         },
         {
-            "path": "images/basic-config.png",
-            "addressable": true
-        },
-        {
-            "path": "images/advanced-config.png",
-            "addressable": true
-        },
-        {
-            "path": "images/marketplace.png",
-            "addressable": true
-        },
-        {
-            "path": "images/install.png",
-            "addressable": true
-        },
-        {
-            "path": "images/extension-icon.png",
+            "path": "images",
             "addressable": true
         },
         {
@@ -118,6 +102,9 @@
         },
         {
             "path": "images/install.png"
+        },
+        {
+            "path": "images/log.png"
         }
     ]
 }
