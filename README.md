@@ -1,33 +1,25 @@
-# poc_azure_ci_ext
+# Azure DevOps Extension for NowSecure Auto Security Test
 
+## Development
 - install node
 - npm install -g tfx-cli
-- npm init -y
-- npm install vss-web-extension-sdk --save
-- npm install azure-pipelines-task-lib --save
-- npm install @types/node --save-dev
-- npm install @types/q --save-dev
-- tsc --init
-- tsc
-- tfx extension create --rev-version --manifest-globs vss-extension.json
+- cd Nowsecure
+- npm install
 
+Edit task.json to update version
+
+Edit index.ts to update business logic/params
+
+Finally, run
+```
+  tsc
+```
 ## Deploy
 ```
-  cd ns
-  Edit task.json to update version
-  Edit index.ts to update business logic/params
-  tsc
-  npm install
-  cd ..
+  cd base-directory for this project
   tfx extension create --manifest-globs vss-extension.json
 ```
-Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publishers/nowsecure?noPrompt=true
-
-And then go to https://dev.azure.com/nowsecure/_settings/ to install the extension (under extensions)
-
-Finally add task to your build job.
-
-Note: On the Variables tab, add system.debug and set it to true. Select to allow at queue time.
+Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publishers/nowsecure-com?noPrompt=true
 
 ## Install
 - Go to your profile page https://dev.azure.com/{userid}/
@@ -54,20 +46,15 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assembleDebug'
-    
 - task: CopyFiles@2
   inputs:
     contents: '**/*.apk'
     targetFolder: '$(build.artifactStagingDirectory)'
-
-
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(build.artifactStagingDirectory)'
     artifactName: 'drop'
     artifactType: 'container'
-    
-
 - task: azure-nowsecure-auto-security-test@1
   inputs:
     artifactsDir: '$(build.artifactStagingDirectory)/NowSecureArtifacts'
