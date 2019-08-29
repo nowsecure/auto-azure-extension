@@ -31,12 +31,6 @@
 		},
 		{
 			"path": "images"
-		},
-		{
-			"path": "overview.md"
-		},
-		{
-			"path": "license-terms.md"
 		}
 	],
 	"contributions": [
@@ -53,10 +47,10 @@
 	],
 	"content": {
 		"details": {
-			"path": "overview.md"
+			"path": "Nowsecure/overview.md"
 		},
 		"license": {
-			"path": "license-terms.md"
+			"path": "Nowsecure/license-terms.md"
 		}
 	},
 	"links": {
