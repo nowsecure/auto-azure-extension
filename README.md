@@ -1,6 +1,7 @@
 # Azure DevOps Extension for NowSecure Auto Security Test
 
-## Marketplace: [https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.azure-nowsecure-auto-security-test]
+## Marketplace URL for Installation and Download to TFS/Azure DevOps Server:
+- [https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.azure-nowsecure-auto-security-test]
 
 ## Development
 - install node
@@ -16,6 +17,10 @@ Finally, run
 ```
   tsc
 ```
+
+Note: It uses same core Java code that is used by the CircleCI (https://github.com/nowsecure/auto-circleci-plugin)
+
+
 ## Deploy
 ```
   cd base-directory for this project
