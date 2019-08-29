@@ -12,6 +12,7 @@ Following are parameters needed for the job:
 - group: optional parameter for group-id.
 - waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
 - showStatusMessages: Specify flag to show status messages from automation testing
+- score: Break build if analysis results find security score lower than given parameter.
 
 ### Access token
 Generate token as described on https://docs.nowsecure.com/auto/integration-services/jenkins-integration.
