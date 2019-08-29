@@ -56,5 +56,5 @@ steps:
 ```
 
 #### View Output logs
-![](images/logs.png)
+![](images/log.png)
 
