@@ -25,7 +25,7 @@ Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publ
 
 ### Installation
 
-#### Find it in Azure Devops Marketplace [https://marketplace.visualstudio.com/azuredevops] using "NowSecure Security Test Extension"
+Find it in Azure Devops Marketplace [https://marketplace.visualstudio.com/azuredevops] using "NowSecure Security Test Extension"
 ![](images/marketplace.png)
 
 Then install it as follows:
