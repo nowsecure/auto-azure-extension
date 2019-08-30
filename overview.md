@@ -8,18 +8,18 @@ Purpose-built for mobile app teams, NowSecure AUTO provides fully automated, mob
 Following are parameters needed for the job:
 - token: mandatory parameter for API token. visit https://docs.nowsecure.com/auto/integration-services/jenkins-integration to generate token. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
 - file: mandatory parameter to specify mobile binary.
+- group: parameter parameter for group-id.
 - url: optional parameter for nowsecure auto API URL with default value of https://lab-api.nowsecure.com
-- group: optional parameter for group-id.
 - waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
-- showStatusMessages: Specify flag to show status messages from automation testing
-- score: Break build if analysis results find security score lower than given parameter.
+- showStatusMessages: Optional flag to show status messages from automation testing.
+- score: Optional numeric value to break the build if security score from analysis is lower than the score value.
 
 ### Access token
 Generate token as described on https://docs.nowsecure.com/auto/integration-services/jenkins-integration.
 
 ### Installation
 
-Find it in Azure Devops Marketplace [https://marketplace.visualstudio.com/azuredevops] using "NowSecure Security Test Extension"
+Find it in [Azure Devops Marketplace](https://marketplace.visualstudio.com/azuredevops) using "NowSecure Security Test Extension"
 ![](images/marketplace.png)
 
 Then install it as follows:
@@ -68,8 +68,8 @@ steps:
 ```
 Note: "task: azure-nowsecure-auto-security-test@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
 
-#### Publish Artifacts
-You can add task to publish artifacts from Nowsecure security task as follows
+#### Publish/View Artifacts
+You can add task to publish artifacts (API results) from Nowsecure security task as follows
 ```
 - task: PublishBuildArtifacts@1
   inputs:
@@ -77,6 +77,10 @@ You can add task to publish artifacts from Nowsecure security task as follows
     artifactName: 'NowSecureArtifacts'
     artifactType: 'container'
 ```
+
+You can view artifacts from the build output such as:
+![](images/artifacts.png)
+
 
 #### View Output logs
 ![](images/log.png)
