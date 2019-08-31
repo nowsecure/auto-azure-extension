@@ -7,8 +7,9 @@ Purpose-built for mobile app teams, NowSecure AUTO provides fully automated, mob
 ## Job Parameters
 Following are parameters needed for the job:
 - token: mandatory parameter for API token. visit https://docs.nowsecure.com/auto/integration-services/jenkins-integration to generate token. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
-- file: mandatory parameter to specify mobile binary.
-- group: parameter parameter for group-id.
+- filepath: mandatory parameter to specify mobile binary.
+- group: mandatory parameter for group-id.
+- artifactsDir: mandatory parameter for directory where API results are stored.
 - url: optional parameter for nowsecure auto API URL with default value of https://lab-api.nowsecure.com
 - waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
 - showStatusMessages: Optional flag to show status messages from automation testing.
