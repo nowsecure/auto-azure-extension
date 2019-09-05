@@ -10,7 +10,7 @@
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 5
+        "Patch": 6
     },
     "demands": [
         "java"
@@ -56,13 +56,13 @@
             "groupName": "advanced"
         },
         {
-            "name": "score",
+            "name": "scoreThreshold",
             "type": "int",
             "label": "Break Build on Lower Security Score Than",
             "defaultValue": 0,
             "required": false,
             "groupName": "advanced",
-            "helpMarkDown": "-score option."
+            "helpMarkDown": "-scoreThreshold option."
         },
         {
             "name": "waitMinutes",

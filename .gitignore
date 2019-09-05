@@ -1,3 +1,5 @@
 node_modules
 .*rc
 *.sh
+Nowsecure/index.js
+*.vsix

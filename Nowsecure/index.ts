@@ -33,8 +33,8 @@ tl.debug("url: " + url);
 let artifactsDir = tl.getInput("artifactsDir", true);
 tl.debug("artifactsDir: " + artifactsDir);
 
-let score = tl.getInput("score", false);
-tl.debug("score: " + score);
+let scoreThreshold = tl.getInput("scoreThreshold", false);
+tl.debug("scoreThreshold: " + scoreThreshold);
 
 let waitMinutes = tl.getInput("waitMinutes", false);
 tl.debug("waitMinutes: " + waitMinutes);
@@ -101,9 +101,9 @@ if (password) {
   java.arg("--auto-password");
   java.arg(password);
 }
-if (score) {
+if (scoreThreshold) {
   java.arg("--auto-score");
-  java.arg(score);
+  java.arg(scoreThreshold);
 } else {
   java.arg("--auto-score");
   java.arg("0");

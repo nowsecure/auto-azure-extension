@@ -6,17 +6,18 @@ Purpose-built for mobile app teams, NowSecure AUTO provides fully automated, mob
 
 ## Job Parameters
 Following are parameters needed for the job:
-- token: mandatory parameter for API token. visit https://docs.nowsecure.com/auto/integration-services/jenkins-integration to generate token. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
+- token: API tokens can be created by logging into NowSecure AUTO and navigating to the Profile & Preferences page. Enter a Token Name in the Create AccessToken field and click the Create button. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
 - filepath: mandatory parameter to specify mobile binary.
 - group: mandatory parameter for group-id.
 - artifactsDir: mandatory parameter for directory where API results are stored.
 - url: optional parameter for nowsecure auto API URL with default value of https://lab-api.nowsecure.com
 - waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
 - showStatusMessages: Optional flag to show status messages from automation testing.
-- score: Optional numeric value to break the build if security score from analysis is lower than the score value.
+- scoreThreshold: Optional numeric value to break the build if security score from analysis is lower than the scoreThreshold value.
 
 ### Access token
-Generate token as described on https://docs.nowsecure.com/auto/integration-services/jenkins-integration.
+API tokens can be created by logging into NowSecure AUTO and navigating to the Profile & Preferences page. Enter a Token Name in the Create AccessToken field and click the Create button. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
+
 
 ### Installation
 
@@ -64,7 +65,7 @@ steps:
     group: 'xxxxx'
     waitMinutes: 60
     showStatusMessages: true
-    score: 75
+    scoreThreshold: 75
     token: 'xxxxx'
 ```
 Note: "task: azure-nowsecure-auto-security-test@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
