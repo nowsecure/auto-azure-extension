@@ -10,7 +10,7 @@
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 6
+        "Patch": 7
     },
     "demands": [
         "java"
@@ -45,6 +45,14 @@
             "required": true,
             "label": "API Token",
             "helpMarkDown": "-token option. API token to access the security service."
+        },
+        {
+            "name": "artifactsDir",
+            "type": "string",
+            "label": "Artifacts Dir",
+            "defaultValue": "$(build.artifactStagingDirectory)/NowSecureArtifacts",
+            "required": true,
+            "helpMarkDown": "-artifactsDir for the NowSecure API."
         },
         {
             "name": "url",
