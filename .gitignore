@@ -3,3 +3,5 @@ node_modules
 *.sh
 Nowsecure/index.js
 *.vsix
+
+.devcontainer*
