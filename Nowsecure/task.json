@@ -6,11 +6,14 @@
     "helpMarkDown": "[NowSecure](http://nowsecure.com)",
     "category": "Build",
     "author": "Nowsecure-com",
-    "visibility": [ "Build", "Release" ],
+    "visibility": [
+        "Build",
+        "Release"
+    ],
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 12
+        "Patch": 13
     },
     "demands": [
         "java"
