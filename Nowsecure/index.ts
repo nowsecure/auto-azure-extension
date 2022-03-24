@@ -53,7 +53,7 @@ if (!javaPath) {
   onError("java is not found in the path", 1);
 }
 let java = tl.tool("java");
-let nsAPI = path.join(__dirname, "NSAPI.jar");
+let nsAPI = path.join(__dirname, "nowsecure-ci.jar");
 
 java.arg("-jar");
 java.arg(nsAPI);
@@ -63,49 +63,49 @@ java.arg("--plugin-name");
 java.arg("azure-nowsecure-auto-security-test");
 java.arg("--plugin-version");
 java.arg(version);
-java.arg("--auto-file");
+java.arg("--file");
 java.arg(filepath);
-java.arg("--auto-group");
+java.arg("--group");
 java.arg(group);
-java.arg("--auto-token");
+java.arg("--token");
 java.arg(token);
-java.arg("--auto-dir");
+java.arg("--dir");
 java.arg(artifactsDir);
 
 if (url) {
-  java.arg("--auto-url");
+  java.arg("--url");
   java.arg(url);
 }
 
 if (waitMinutes) {
-  java.arg("--auto-wait");
+  java.arg("--wait");
   java.arg(waitMinutes);
 } else {
-  java.arg("--auto-wait");
+  java.arg("--wait");
   java.arg("0");
 }
 
 if (showStatusMessages) {
-  java.arg("--auto-show-status-messages");
+  java.arg("--show-status-messages");
   java.arg(showStatusMessages);
 } else {
-  java.arg("--auto-show-status-messages");
+  java.arg("--show-status-messages");
   java.arg("true");
 }
 
 if (username) {
-  java.arg("--auto-username");
+  java.arg("--username");
   java.arg(username);
 }
 if (password) {
-  java.arg("--auto-password");
+  java.arg("--password");
   java.arg(password);
 }
 if (scoreThreshold) {
-  java.arg("--auto-score");
+  java.arg("--score");
   java.arg(scoreThreshold);
 } else {
-  java.arg("--auto-score");
+  java.arg("--score");
   java.arg("0");
 }
 
