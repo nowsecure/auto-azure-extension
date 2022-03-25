@@ -1,10 +1,10 @@
 {
     "manifestVersion": 1,
-    "id": "azure-nowsecure-auto-security-test",
+    "id": "azure-nowsecure-auto-security-test-qa",
     "name": "azure-nowsecure-auto-security-test",
     "description": "Azure Extension for NowSecure Auto Security Test",
     "version": "1.0.12",
-    "publisher": "Nowsecure-com",
+    "publisher": "qa-nowsecure",
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
@@ -18,7 +18,7 @@
         "plugin",
         "nowsecure"
     ],
-    "public": true,
+    "public": false,
     "categories": [
         "Azure Pipelines"
     ],
