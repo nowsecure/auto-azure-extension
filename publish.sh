@@ -43,4 +43,3 @@ tfx extension publish \
     $OVERRIDES \
     $SHARE_WITH \
     --token $TOKEN
-    
