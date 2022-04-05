@@ -65,7 +65,7 @@ java.arg("--plugin-version");
 java.arg(version);
 java.arg("--file");
 java.arg(filepath);
-java.arg("--group");
+java.arg("--group-id");
 java.arg(group);
 java.arg("--token");
 java.arg(token);
