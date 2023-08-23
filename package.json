@@ -1,6 +1,6 @@
 {
   "name": "ns-plugin",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "- install node - npm install -g tfx-cli - npm init -y - npm install vss-web-extension-sdk --save",
   "main": "index.js",
   "scripts": {
