@@ -1,7 +1,7 @@
 {
   "name": "ns-plugin",
-  "version": "1.0.20",
-  "description": "- install node - npm install -g tfx-cli - npm init -y - npm install vss-web-extension-sdk --save",
+  "version": "2.0.0",
+  "description": "Node wrapper for nowsecure-ci binary",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,11 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "azure-pipelines-task-lib": "3.1.10",
-    "vss-web-extension-sdk": "5.141.0"
-  },
-  "devDependencies": {
-    "@types/node": "12.7.2",
-    "@types/q": "1.5.2"
+    "azure-pipelines-task-lib": "^5.2.1"
   }
 }

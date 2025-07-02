@@ -1,135 +1,73 @@
-//////////////////////////////////////////////////////////////////////////
-// Node code for calling Java app
-//////////////////////////////////////////////////////////////////////////
-import * as tl from "azure-pipelines-task-lib/task";
+import tl = require("azure-pipelines-task-lib/task");
 import fs = require("fs");
 import path = require("path");
 
-let onError = function (errMsg: string, code: number) {
-  tl.error(errMsg);
-  tl.setResult(tl.TaskResult.Failed, errMsg);
-}
 
-//////////////////////////////////////////////////////////////////////////
-// Read parameters
-//////////////////////////////////////////////////////////////////////////
-let filepath = tl.getInput("filepath", true);
-tl.debug("filepath: " + filepath);
+// Download the tool
+// const platform = tl.getPlatform()
+// const arch = tl.getVariable("Agent.OSArchitecture")
+// const nowsecure_ci_version = tl.getInput("nowsecure_ci_version", true);
+// const release_path = "https://github.com/nowsecure/nowsecure-ci/releases/download/"
 
-let group = tl.getInput("group", true);
-tl.debug("group: " + group);
+// required params
+const filepath = tl.getPathInput("binary_file", true, true);
+const group = tl.getInput("group", true);
+const token = tl.getInput("token", true);
 
-let token = tl.getInput("token", true);
-tl.debug("token: " + token);
+// Optional parameters
+const artifact_dir = tl.getInput("artifact_dir", false);
+const api_host = tl.getInput("api_host", false);
+const ui_host = tl.getInput("ui_host", false);
+const log_level = tl.getInput("log_level", false);
+const analysisType = tl.getInput("analysis_type", false);
+const minimum_score = tl.getInput("minimum_score", false);
 
-let username = tl.getInput("username", false);
-tl.debug("username: " + username);
+let polling_duration_minutes = tl.getInput("polling_duration_minutes", false);
 
-let password = tl.getInput("password", false);
-
-let url = tl.getInput("url", false);
-tl.debug("url: " + url);
-
-let artifactsDir = tl.getInput("artifactsDir", true);
-tl.debug("artifactsDir: " + artifactsDir);
-
-let scoreThreshold = tl.getInput("scoreThreshold", false);
-tl.debug("scoreThreshold: " + scoreThreshold);
-
-let waitMinutes = tl.getInput("waitMinutes", false);
-tl.debug("waitMinutes: " + waitMinutes);
-
-let showStatusMessages = tl.getInput("showStatusMessages", false);
-tl.debug("showStatusMessages: " + showStatusMessages);
-
-//////////////////////////////////////////////////////////////////////////
-// Find Java executable and set parameters
-//////////////////////////////////////////////////////////////////////////
-let task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
-let version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
-
-let javaPath = tl.which("java");
-if (!javaPath) {
-  onError("java is not found in the path", 1);
-}
-let java = tl.tool("java");
-let nsAPI = path.join(__dirname, "nowsecure-ci.jar");
-
-java.arg("-jar");
-java.arg(nsAPI);
-
-
-java.arg("--plugin-name");
-java.arg("azure-nowsecure-auto-security-test");
-java.arg("--plugin-version");
-java.arg(version);
-java.arg("--file");
-java.arg(filepath);
-java.arg("--group-id");
-java.arg(group);
-java.arg("--token");
-java.arg(token);
-java.arg("--dir");
-java.arg(artifactsDir);
-
-if (url) {
-  java.arg("--url");
-  java.arg(url);
-}
-
-if (waitMinutes) {
-  java.arg("--wait");
-  java.arg(waitMinutes);
+if (analysisType === 'static') {
+  polling_duration_minutes = polling_duration_minutes || '30'
 } else {
-  java.arg("--wait");
-  java.arg("0");
+  polling_duration_minutes = polling_duration_minutes || '60'
 }
 
-if (showStatusMessages) {
-  java.arg("--show-status-messages");
-  java.arg(showStatusMessages);
-} else {
-  java.arg("--show-status-messages");
-  java.arg("true");
-}
+const task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
+const version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
 
-if (username) {
-  java.arg("--username");
-  java.arg(username);
-}
-if (password) {
-  java.arg("--password");
-  java.arg(password);
-}
-if (scoreThreshold) {
-  java.arg("--score");
-  java.arg(scoreThreshold);
-} else {
-  java.arg("--score");
-  java.arg("0");
-}
+const ns = tl.tool("./ns")
+             .arg("run file")
+             .arg(filepath)
+             .arg(`--group-ref ${group}`)
+             .arg(`--token ${token}`)
+             .arg(`--output ${artifact_dir}`)
+             .arg(`--api-host ${api_host}`)
+             .arg(`--ui-host ${ui_host}`)
+             .arg(`--log-level ${log_level}`)
+             .arg(`--minimum-score ${minimum_score}`)
+             .arg(`--ci-environment azure-${version}`)
 
-if (process.env.SYSTEM_DEBUG) {
-  java.arg("--debug");
-}
-
-java.on("stdout", function (data: Buffer) {
+ns.on("stdout", function (data: Buffer) {
   console.log(data.toString());
 });
 
-console.log(java);
+console.log(ns);
+//
+// tl.uploadArtifact(artifacts)
 
 //////////////////////////////////////////////////////////////////////////
-// Starting Java app to process the app for preflight and assessment 
+// Starting Ns app to process the app for preflight and assessment
 // based on above config.
 //////////////////////////////////////////////////////////////////////////
-java.exec()
+ns.exec()
   .then(function (code: number) {
     tl.debug("code: " + code);
     if (code != 0) {
-      onError("azure-nowsecure-auto-security-test upload and security test failed.", code);
+      const errmsg = "azure-nowsecure-auto-security-test upload and security test failed."
+      tl.error(errmsg)
+      tl.setResult(tl.TaskResult.Failed, errmsg)
     }
   })
   .fail(function (err: Error) {
-    onError("azure-nowsecure-auto-security-test upload and security test failed [" + err.toString() + "]", 1);
+    const errmsg = `azure-nowsecure-auto-security-test upload and security test failed [ ${err} ]`
+      tl.error(errmsg)
+      tl.setResult(tl.TaskResult.Failed, errmsg)
   });

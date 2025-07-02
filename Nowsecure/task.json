@@ -8,16 +8,14 @@
     "author": "Nowsecure-com",
     "visibility": [
         "Build",
+        "Test",
         "Release"
     ],
     "version": {
-        "Major": 1,
+        "Major": 2,
         "Minor": 0,
-        "Patch": 20
+        "Patch": 0
     },
-    "demands": [
-        "java"
-    ],
     "instanceNameFormat": "nowsecure-auto-security-test $(filepath)",
     "groups": [
         {
@@ -28,76 +26,85 @@
     ],
     "inputs": [
         {
-            "name": "filepath",
+            "name": "analysis_type",
+            "type": "pickList",
+            "label": "Analysis Type",
+            "defaultValue": "static",
+            "values": ["full", "static"],
+            "required": false,
+            "helpMarkDown": "Defines the type of assessment to run.  The 'full' runs both dynamic and static analyis tooling.  The 'static' option runs only static."
+        },
+        {
+            "name": "artifact_dir",
             "type": "string",
-            "label": "File Path",
-            "defaultValue": "",
+            "label": "Artifacts Directory",
+            "defaultValue": "./artifacts/nowsecure",
+            "required": false,
+            "helpMarkDown": "Defines the directory for nowsecure artifacts to be output to. In the case of the default assessment results would be `./artifacts/nowsecure/assessment.json`"
+        },
+        {
+            "name": "binary_file",
+            "type": "filePath",
+            "label": "Binary File Path",
             "required": true,
-            "helpMarkDown": "-filepath option. Filepath for mobile binary to upload."
+            "helpMarkDown": "Defines the filepath for the ipa / apk that is to be uploaded to run an assessments against."
         },
         {
             "name": "group",
             "type": "string",
             "required": true,
-            "label": "Group ID",
-            "helpMarkDown": "-group option. Organization group that the mobile app belongs to."
+            "label": "Group",
+            "helpMarkDown": "Defines the group reference that is used to trigger assessments.  Information on how to get the group reference can be found in the NowSecure Support Portal (support.nowsecure.com)."
+        },
+        {
+            "name": "api_host",
+            "type": "string",
+            "required": false,
+            "defaultValue": "https://lab-api.nowsecure.com",
+            "label": "API Host",
+            "helpMarkDown": "Defines the NowSecure base API to use.  This will not change unless you are leveraging a single tenant."
+        },
+        {
+            "name": "ui_host",
+            "type": "string",
+            "required": false,
+            "defaultValue": "https://app.nowsecure.com",
+            "label": "UI Host",
+            "helpMarkDown": "Defines the NowSecure base UI to use.  This will not change unless you are leveraging a single tenant."
+        },
+        {
+            "name": "log_level",
+            "type": "pickList",
+            "required": false,
+            "defaultValue": "info",
+            "label": "Log Level",
+            "values": ["debug", "info", "warn", "error"],
+            "helpMarkDown": "Defines the log level set for the NowSecure analysis task."
+        },
+        {
+            "name": "minimum_score",
+            "type": "int",
+            "required": false,
+            "defaultValue": -1,
+            "label": "Minimum Score",
+            "helpMarkDown": "Defines the score under which an assessment will fail."
+        },
+        {
+            "name": "polling_duration_minutes",
+            "type": "int",
+            "required": false,
+            "label": "Polling Duration",
+            "helpMarkDown": "Defines the length of time (in minutes) to poll for an  assessment job completion.  The default for 'static' assessments is 30 minutes.  The default for 'full' assessments is 60 minutes."
         },
         {
             "name": "token",
             "type": "string",
             "required": true,
-            "label": "API Token",
-            "helpMarkDown": "-token option. API token to access the security service."
-        },
-        {
-            "name": "artifactsDir",
-            "type": "string",
-            "label": "Artifacts Dir",
-            "defaultValue": "$(build.artifactStagingDirectory)/NowSecureArtifacts",
-            "required": true,
-            "helpMarkDown": "-artifactsDir for the NowSecure API."
-        },
-        {
-            "name": "url",
-            "type": "string",
-            "label": "API URL",
-            "defaultValue": "https://lab-api.nowsecure.com",
-            "required": false,
-            "helpMarkDown": "-url for the NowSecure API.",
-            "groupName": "advanced"
-        },
-        {
-            "name": "scoreThreshold",
-            "type": "int",
-            "label": "Break Build on Lower Security Score Than",
-            "defaultValue": 0,
-            "required": false,
-            "groupName": "advanced",
-            "helpMarkDown": "-scoreThreshold option."
-        },
-        {
-            "name": "waitMinutes",
-            "type": "int",
-            "label": "Max Wait Time (in minutes)",
-            "defaultValue": 30,
-            "required": false,
-            "helpMarkDown": "-waitMinutes option. This defines how long the build should wait (in minutes) to finish security analysis.",
-            "groupName": "advanced"
-        },
-        {
-            "name": "showStatusMessages",
-            "type": "boolean",
-            "label": "Show Status Messages for Test Automation",
-            "defaultValue": true,
-            "required": false,
-            "helpMarkDown": "-showStatusMessages option. This would enable status messages from dynamic processing.",
-            "groupName": "advanced"
+            "label": "Token",
+            "helpMarkDown": "Defines the token used to communicate with the nowsecure API.  This token should be stored as a secret.  Information on how to create a token can be found in the NowSecure Support Portal (http://support.nowsecure.com/)."
         }
     ],
     "execution": {
-        "Node16": {
-            "target": "index.js"
-        },
         "Node20_1": {
             "target": "index.js"
         }
