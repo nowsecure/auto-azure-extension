@@ -1,13 +1,25 @@
 import tl = require("azure-pipelines-task-lib/task");
+import tr = require("azure-pipelines-task-lib/toolrunner");
 import fs = require("fs");
 import path = require("path");
 
 
-// Download the tool
-// const platform = tl.getPlatform()
-// const arch = tl.getVariable("Agent.OSArchitecture")
-// const nowsecure_ci_version = tl.getInput("nowsecure_ci_version", true);
-// const release_path = "https://github.com/nowsecure/nowsecure-ci/releases/download/"
+function getTool() : tr.ToolRunner  {
+  const platform = tl.getPlatform()
+  const arch = tl.getVariable("Agent.OSArchitecture")
+
+  if (arch != 'X64') {
+    const err = "Unsupported runner architecture"
+    tl.error(err)
+    tl.setResult(tl.TaskResult.Failed, err)
+    throw new Error(err)
+  }
+
+  if (platform === tl.Platform.Windows) {
+    return tl.tool("./ns.exe")
+  }
+  return tl.tool("./ns")
+}
 
 // required params
 const filepath = tl.getPathInput("binary_file", true, true);
@@ -33,25 +45,21 @@ if (analysisType === 'static') {
 const task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
 const version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
 
-const ns = tl.tool("./ns")
-             .arg("run file")
-             .arg(filepath)
-             .arg(`--group-ref ${group}`)
-             .arg(`--token ${token}`)
-             .arg(`--output ${artifact_dir}`)
-             .arg(`--api-host ${api_host}`)
-             .arg(`--ui-host ${ui_host}`)
-             .arg(`--log-level ${log_level}`)
-             .arg(`--minimum-score ${minimum_score}`)
-             .arg(`--ci-environment azure-${version}`)
+const ns = getTool()
+            .arg("run file")
+            .arg(filepath)
+            .arg(`--group-ref ${group}`)
+            .arg(`--token ${token}`)
+            .arg(`--output ${artifact_dir}`)
+            .arg(`--api-host ${api_host}`)
+            .arg(`--ui-host ${ui_host}`)
+            .arg(`--log-level ${log_level}`)
+            .arg(`--minimum-score ${minimum_score}`)
+            .arg(`--ci-environment azure-${version}`)
 
 ns.on("stdout", function (data: Buffer) {
   console.log(data.toString());
 });
-
-console.log(ns);
-//
-// tl.uploadArtifact(artifacts)
 
 //////////////////////////////////////////////////////////////////////////
 // Starting Ns app to process the app for preflight and assessment
