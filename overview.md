@@ -9,35 +9,28 @@ To add this component to your CI/CD pipeline, the following should be done:
 -  Add the following include entry to your project's CI/CD configuration and set your input values 
 
     ```yaml
-    - task: azure-nowsecure-auto-security-test@<tag>
+    - task: nowsecure-azure-extension@<tag>
       inputs:
         binary_file: '<path-to-binary>'
         group: '<group-ref>'
         token: $NS_TOKEN
     ```
 
-   - `<tag>` is the release tag you want to use ([releases list](https://gitlab.com/nowsecure/eng/platform-infrastructure/nowsecure-ci-component/-/releases)). 
+   - `<tag>` is the release tag you want to use 
 
    - `<group-ref>` is uuid of the group that will be used to trigger assessments. Information on how to get the group reference can be found in the [NowSecure Support Portal](https://support.nowsecure.com).
    - `<path-to-binary>` is the filepath for the ipa / apk that is to be uploaded to run an assessments against. Ideally this will be an artifact of some previous build step in a pipeline.
-   - `$NS_TOKEN` is the token used to communicate with the NowSecure API. This token should be a [Gitlab CI/CD variable](https://docs.gitlab.com/ci/variables/#define-a-cicd-variable-in-the-ui). Information on how to create a token can be found in the [NowSecure Support Portal](http://support.nowsecure.com/).
-
+   - `$NS_TOKEN` is the token used to communicate with the NowSecure API. This token should be an [Azure Devops Secret Variable](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-secret-variables?view=azure-devops&tabs=yaml%2Cbash#secret-variable-in-the-ui). Information on how to create a token can be found in the [NowSecure Support Portal](http://support.nowsecure.com/).
 
 ### Installation
 
-Find it in [Azure Devops Marketplace](https://marketplace.visualstudio.com/azuredevops) using "NowSecure Security Test Extension"
-![](images/marketplace.png)
+Find it in [Azure Devops Marketplace](https://marketplace.visualstudio.com/azuredevops) using "NowSecure Azure Extension"
 
-Then install it as follows:
-![](images/install.png)
+Then install it following [Microsoft's instructions](https://learn.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops) on installing Azure Devops Marketplace extensions.
 
-#### Add to your Build
+*NOTE:* Currently, compatibility is limited to Windows or Linux platforms running an X64 architecture. In order for the extension to work, please make sure you have an appropriate `vmImage`. 
 
-#### Basic Config
-![](images/basic-config.png)
-
-#### Advanced Config
-![](images/advanced-config.png)
+### Sample Configurations
 
 #### Sample Build Pipeline for Android
 ```yaml
@@ -62,7 +55,7 @@ steps:
     pathToPublish: '$(build.artifactStagingDirectory)'
     artifactName: 'drop'
     artifactType: 'container'
-- task: azure-nowsecure-auto-security-test@1
+- task: nowsecure-azure-extension@1
   inputs:
     # Required inputs
     group: "0000-00000-0000-0000"
@@ -73,10 +66,10 @@ steps:
     analysis_type: static
     polling_duration_minutes: 30
 ```
-Note: "task: azure-nowsecure-auto-security-test@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
+Note: "task: nowsecure-azure-extension@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
 
 #### Publish/View Artifacts
-You can add task to publish artifacts (API results) from Nowsecure security task as follows
+You can add task to publish artifacts (API results) from the Nowsecure Azure Extension task as shown:
 ```yaml
 - task: PublishBuildArtifacts@1
   inputs:
@@ -85,14 +78,15 @@ You can add task to publish artifacts (API results) from Nowsecure security task
     artifactType: 'container'
 ```
 
-You can view artifacts from the build output such as:
-![](images/artifacts.png)
-
-
-#### View Output logs
-![](images/log.png)
-
-
-#### Debugging
-- Add variable for system.debug=true in your build to see more detailed logs, e.g.,
-![](images/debug.png)
+##### Debugging
+To enable debug-level logging for the NowSecure Azure Extension, add the `log_level` input with the `'debug'` option as shown below:
+```yaml
+- task: nowsecure-azure-extension@1
+  inputs:
+    # Required inputs
+    group: "0000-00000-0000-0000"
+    token: $NS_TOKEN
+    binary_file: "path-to-artifact.apk"
+    # Enable Debug Level Logging
+    log_level: 'debug'
+```
