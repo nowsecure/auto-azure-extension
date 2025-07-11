@@ -3,79 +3,133 @@ import tr = require("azure-pipelines-task-lib/toolrunner");
 import fs = require("fs");
 import path = require("path");
 
+enum Arch {
+  X86,
+  X64,
+  ARM
+}
 
-function getTool() : tr.ToolRunner  {
+function makeExecutable(toolPath: string, platform: tl.Platform) {
+  if (platform !== tl.Platform.Windows) {
+    tl.execSync("chmod", ["u+x", toolPath])
+  } else {
+    tl.execSync("attrib", ["+x", toolPath])
+  }
+}
+
+function archFrom(envvar: string): Arch {
+  switch (envvar) {
+    case "X86":
+      return Arch.X86
+    case "X64":
+      return Arch.X64
+    case "ARM":
+      return Arch.ARM
+    default:
+      const emsg = "Unknown system architecture"
+      tl.setResult(tl.TaskResult.Failed, emsg)
+      throw new Error(emsg)
+  }
+}
+
+function getTool(): tr.ToolRunner {
   const platform = tl.getPlatform()
-  const arch = tl.getVariable("Agent.OSArchitecture")
+  const arch = archFrom(tl.getVariable("Agent.OSArchitecture"))
 
-  if (arch != 'X64') {
+  if (arch !== Arch.X64) {
     const err = "Unsupported runner architecture"
     tl.error(err)
     tl.setResult(tl.TaskResult.Failed, err)
     throw new Error(err)
   }
 
-  if (platform === tl.Platform.Windows) {
-    return tl.tool("./ns.exe")
+  const toolPath = platform === tl.Platform.Windows ?
+    path.join(__dirname, "ns.exe") :
+    path.join(__dirname, "ns")
+
+  makeExecutable(toolPath, platform)
+
+  return tl.tool(toolPath)
+}
+
+type Inputs = {
+  // required params
+  filepath: string;
+  group: string;
+  token: string;
+  // optional params
+  artifact_dir?: string;
+  api_host?: string;
+  ui_host?: string;
+  log_level?: string;
+  analysisType?: string;
+  minimum_score?: string;
+  polling_duration_minutes?: string;
+}
+
+function getInputs(): Inputs {
+  const inputs = {
+    filepath: tl.getPathInputRequired("binary_file", true),
+    group: tl.getInput("group", true),
+    token: tl.getInput("token", true),
+    // optional params
+    artifact_dir: tl.getInput("artifact_dir", false),
+    api_host: tl.getInput("api_host", false),
+    ui_host: tl.getInput("ui_host", false),
+    log_level: tl.getInput("log_level", false),
+    analysisType: tl.getInput("analysis_type", false),
+    minimum_score: tl.getInput("minimum_score", false),
+    polling_duration_minutes: tl.getInput("polling_duration_minutes", false)
   }
-  return tl.tool("./ns")
+
+  if (inputs.analysisType === 'static') {
+    inputs.polling_duration_minutes = inputs.polling_duration_minutes || '30'
+  } else {
+    inputs.polling_duration_minutes = inputs.polling_duration_minutes || '60'
+  }
+
+  return inputs
 }
 
-// required params
-const filepath = tl.getPathInput("binary_file", true, true);
-const group = tl.getInput("group", true);
-const token = tl.getInput("token", true);
+async function run() {
+  const task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
+  const version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
 
-// Optional parameters
-const artifact_dir = tl.getInput("artifact_dir", false);
-const api_host = tl.getInput("api_host", false);
-const ui_host = tl.getInput("ui_host", false);
-const log_level = tl.getInput("log_level", false);
-const analysisType = tl.getInput("analysis_type", false);
-const minimum_score = tl.getInput("minimum_score", false);
+  const inputs = getInputs()
 
-let polling_duration_minutes = tl.getInput("polling_duration_minutes", false);
+  tl.mkdirP(inputs.artifact_dir)
 
-if (analysisType === 'static') {
-  polling_duration_minutes = polling_duration_minutes || '30'
-} else {
-  polling_duration_minutes = polling_duration_minutes || '60'
-}
+  const ns = getTool()
+    .arg("run")
+    .arg("file")
+    .arg(inputs.filepath)
+    .line(`--group-ref ${inputs.group}`)
+    .line(`--token ${inputs.token}`)
+    .line(`--output ${path.join(inputs.artifact_dir, "assessment.json")}`)
+    .line(`--api-host ${inputs.api_host}`)
+    .line(`--ui-host ${inputs.ui_host}`)
+    .line(`--log-level ${inputs.log_level}`)
+    .line(`--analysis-type ${inputs.analysisType}`)
+    .line(`--minimum-score ${inputs.minimum_score}`)
+    .line(`--poll-for-minutes ${inputs.polling_duration_minutes}`)
+    .line(`--ci-environment azure-${version}`)
 
-const task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
-const version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
-
-const ns = getTool()
-            .arg("run file")
-            .arg(filepath)
-            .arg(`--group-ref ${group}`)
-            .arg(`--token ${token}`)
-            .arg(`--output ${artifact_dir}`)
-            .arg(`--api-host ${api_host}`)
-            .arg(`--ui-host ${ui_host}`)
-            .arg(`--log-level ${log_level}`)
-            .arg(`--minimum-score ${minimum_score}`)
-            .arg(`--ci-environment azure-${version}`)
-
-ns.on("stdout", function (data: Buffer) {
-  console.log(data.toString());
-});
-
-//////////////////////////////////////////////////////////////////////////
-// Starting Ns app to process the app for preflight and assessment
-// based on above config.
-//////////////////////////////////////////////////////////////////////////
-ns.exec()
-  .then(function (code: number) {
-    tl.debug("code: " + code);
-    if (code != 0) {
-      const errmsg = "azure-nowsecure-auto-security-test upload and security test failed."
-      tl.error(errmsg)
-      tl.setResult(tl.TaskResult.Failed, errmsg)
-    }
-  })
-  .fail(function (err: Error) {
-    const errmsg = `azure-nowsecure-auto-security-test upload and security test failed [ ${err} ]`
-      tl.error(errmsg)
-      tl.setResult(tl.TaskResult.Failed, errmsg)
+  ns.on("stdout", function(data: Buffer) {
+    console.log(data.toString());
   });
+
+  let exitCode: number
+  try {
+    exitCode = await ns.execAsync()
+  } catch (err) {
+    const errmsg = `azure-nowsecure-auto-security-test upload and security test failed [ ${err} ]`
+    tl.setResult(tl.TaskResult.Failed, errmsg)
+  }
+
+  if (exitCode != 0) {
+    const errmsg = "azure-nowsecure-auto-security-test upload and security test failed."
+    tl.setResult(tl.TaskResult.Failed, errmsg)
+  }
+}
+
+run()

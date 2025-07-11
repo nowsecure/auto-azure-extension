@@ -1,22 +1,26 @@
-## Azure Extension for NowSecure Auto API
-This extension/plugin adds the ability to perform automatic mobile app security testing for Android and iOS mobile apps through the NowSecure AUTO test engine.
-
-### Summary:
-Purpose-built for mobile app teams, NowSecure AUTO provides fully automated, mobile appsec testing coverage (static+dynamic+behavioral tests) optimized for the dev pipeline. Because NowSecure tests the mobile app binary post-build from Azure Devops, it can test software developed in any language and provides complete results including newly developed code, 3rd party code, and compiler/operating system dependencies. With near zero false positives, NowSecure pinpoints real issues in minutes, with developer fix details, and routes tickets automatically into ticketing systems, such as Jira. NowSecure is frequently used to perform security testing in parallel with functional testing in the dev cycle. Requires a license for and connection to the NowSecure AUTO software. https://www.nowsecure.com
+## NowSecure Azure Extension 
+NowSecure provides purpose-built, fully automated mobile application security testing (static and dynamic) for your development pipeline. By testing your mobile application binary post-build from Gitlab, NowSecure ensure comprehensive coverage of newly developed code, third party components, and system dependencies. NowSecure quickly identifies and details real issues, provides remediation recommendations, and integrates with ticketing systems such as Gitlab and Jira. This integration requires a NowSecure platform license. See https://www.nowsecure.com for more information.
 
 ## Job Parameters
-Following are parameters needed for the job:
-- token: API tokens can be created by logging into NowSecure AUTO and navigating to the Profile & Preferences page. Enter a Token Name in the Create AccessToken field and click the Create button. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
-- filepath: mandatory parameter to specify mobile binary.
-- group: mandatory parameter for group-id.
-- artifactsDir: mandatory parameter for directory where API results are stored.
-- url: optional parameter for nowsecure auto API URL with default value of https://lab-api.nowsecure.com
-- waitMinutes: optional parameter to specify maximum wait in minutes until security test is completed. The default value is 0 minutes that won't wait for completion of the job on NowSecure server.
-- showStatusMessages: Optional flag to show status messages from automation testing.
-- scoreThreshold: Optional numeric value to break the build if security score from analysis is lower than the scoreThreshold value.
+To add this component to your CI/CD pipeline, the following should be done:
+- Get a token from your NowSecure platform instance.  More information on this can be found in the [NowSecure Support Portal](https://support.nowsecure.com/hc/en-us/articles/7499657262093-Creating-a-NowSecure-Platform-API-Bearer-Token)
+- Identify the ID of the group in NowSecure Platform that you want your assessment to be included in.  More information on this can be found in the [NowSecure Support Portal](https://support.nowsecure.com/hc/en-us/articles/6290991166605-Getting-Started-with-Groups#h_01G396F6CTEZ4P6G5Z1FDGJ12K). (Note: Authentication required to access this page)
+- Add a CI/CD variable to your project named, `NS_TOKEN` and add the token created above.  As this is a credential, be sure to set the variable as `Masked and Hidden`.
+-  Add the following include entry to your project's CI/CD configuration and set your input values 
 
-### Access token
-API tokens can be created by logging into NowSecure AUTO and navigating to the Profile & Preferences page. Enter a Token Name in the Create AccessToken field and click the Create button. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
+    ```yaml
+    - task: azure-nowsecure-auto-security-test@<tag>
+      inputs:
+        binary_file: '<path-to-binary>'
+        group: '<group-ref>'
+        token: $NS_TOKEN
+    ```
+
+   - `<tag>` is the release tag you want to use ([releases list](https://gitlab.com/nowsecure/eng/platform-infrastructure/nowsecure-ci-component/-/releases)). 
+
+   - `<group-ref>` is uuid of the group that will be used to trigger assessments. Information on how to get the group reference can be found in the [NowSecure Support Portal](https://support.nowsecure.com).
+   - `<path-to-binary>` is the filepath for the ipa / apk that is to be uploaded to run an assessments against. Ideally this will be an artifact of some previous build step in a pipeline.
+   - `$NS_TOKEN` is the token used to communicate with the NowSecure API. This token should be a [Gitlab CI/CD variable](https://docs.gitlab.com/ci/variables/#define-a-cicd-variable-in-the-ui). Information on how to create a token can be found in the [NowSecure Support Portal](http://support.nowsecure.com/).
 
 
 ### Installation
@@ -36,16 +40,16 @@ Then install it as follows:
 ![](images/advanced-config.png)
 
 #### Sample Build Pipeline for Android
-```
+```yaml
 pool:
-  vmImage: 'macOS 10.13'
+  vmImage: 'ubuntu-latest'
 
 steps:
-- task: Gradle@2
+- task: Gradle@4
   inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
+    cwd: ''
+    wrapperScript: 'gradlew'
+    gradleOpts: '-Xmx3072m'
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assembleDebug'
@@ -60,23 +64,24 @@ steps:
     artifactType: 'container'
 - task: azure-nowsecure-auto-security-test@1
   inputs:
-    artifactsDir: '$(build.artifactStagingDirectory)/NowSecureArtifacts'
-    filepath: '/Users/vsts/agent/2.155.1/work/1/a/app/build/outputs/apk/app-prod-debug.apk'
-    group: 'xxxxx'
-    waitMinutes: 60
-    showStatusMessages: true
-    scoreThreshold: 75
-    token: 'xxxxx'
+    # Required inputs
+    group: "0000-00000-0000-0000"
+    token: $NS_TOKEN
+    binary_file: "path-to-artifact.apk"
+    # Common optional parameters
+    minimum_score: 70
+    analysis_type: static
+    polling_duration_minutes: 30
 ```
 Note: "task: azure-nowsecure-auto-security-test@1" is the main task for security analysis and other tasks above are used to generate Android apk file.
 
 #### Publish/View Artifacts
 You can add task to publish artifacts (API results) from Nowsecure security task as follows
-```
+```yaml
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(build.artifactStagingDirectory)'
-    artifactName: 'NowSecureArtifacts'
+    artifactName: 'nowsecure'
     artifactType: 'container'
 ```
 

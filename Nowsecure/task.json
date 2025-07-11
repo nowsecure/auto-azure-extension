@@ -14,7 +14,7 @@
     "version": {
         "Major": 2,
         "Minor": 0,
-        "Patch": 0
+        "Patch": 31
     },
     "instanceNameFormat": "nowsecure-auto-security-test $(filepath)",
     "groups": [
@@ -30,15 +30,19 @@
             "type": "pickList",
             "label": "Analysis Type",
             "defaultValue": "static",
-            "values": ["full", "static"],
+            "options": {
+                "full": "full",
+                "static": "static"
+            },
             "required": false,
-            "helpMarkDown": "Defines the type of assessment to run.  The 'full' runs both dynamic and static analyis tooling.  The 'static' option runs only static."
+            "helpMarkDown": "Defines the type of assessment to run.  The 'full' runs both dynamic and static analyis tooling.  The 'static' option runs only static.",
+            "groupName": "advanced"
         },
         {
             "name": "artifact_dir",
             "type": "string",
             "label": "Artifacts Directory",
-            "defaultValue": "./artifacts/nowsecure",
+            "defaultValue": "$(build.artifactStagingDirectory)/nowsecure",
             "required": false,
             "helpMarkDown": "Defines the directory for nowsecure artifacts to be output to. In the case of the default assessment results would be `./artifacts/nowsecure/assessment.json`"
         },
@@ -62,7 +66,8 @@
             "required": false,
             "defaultValue": "https://lab-api.nowsecure.com",
             "label": "API Host",
-            "helpMarkDown": "Defines the NowSecure base API to use.  This will not change unless you are leveraging a single tenant."
+            "helpMarkDown": "Defines the NowSecure base API to use.  This will not change unless you are leveraging a single tenant.",
+            "groupName": "advanced"
         },
         {
             "name": "ui_host",
@@ -70,7 +75,8 @@
             "required": false,
             "defaultValue": "https://app.nowsecure.com",
             "label": "UI Host",
-            "helpMarkDown": "Defines the NowSecure base UI to use.  This will not change unless you are leveraging a single tenant."
+            "helpMarkDown": "Defines the NowSecure base UI to use.  This will not change unless you are leveraging a single tenant.",
+            "groupName": "advanced"
         },
         {
             "name": "log_level",
@@ -78,8 +84,14 @@
             "required": false,
             "defaultValue": "info",
             "label": "Log Level",
-            "values": ["debug", "info", "warn", "error"],
-            "helpMarkDown": "Defines the log level set for the NowSecure analysis task."
+            "options": {
+                "debug": "debug",
+                "info": "info",
+                "warn": "warn",
+                "error": "error"
+            },
+            "helpMarkDown": "Defines the log level set for the NowSecure analysis task.",
+            "groupName": "advanced"
         },
         {
             "name": "minimum_score",
@@ -87,14 +99,25 @@
             "required": false,
             "defaultValue": -1,
             "label": "Minimum Score",
-            "helpMarkDown": "Defines the score under which an assessment will fail."
+            "helpMarkDown": "Defines the score under which an assessment will fail.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "nowsecure_ci_version",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "label": "NowSecure CI Version",
+            "helpMarkDown": "Defines version of the underlying NowSecure binary to use.",
+            "groupName": "advanced"
         },
         {
             "name": "polling_duration_minutes",
             "type": "int",
             "required": false,
             "label": "Polling Duration",
-            "helpMarkDown": "Defines the length of time (in minutes) to poll for an  assessment job completion.  The default for 'static' assessments is 30 minutes.  The default for 'full' assessments is 60 minutes."
+            "helpMarkDown": "Defines the length of time (in minutes) to poll for an  assessment job completion.  The default for 'static' assessments is 30 minutes.  The default for 'full' assessments is 60 minutes.",
+            "groupName": "advanced"
         },
         {
             "name": "token",
