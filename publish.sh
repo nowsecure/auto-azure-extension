@@ -2,6 +2,27 @@
 
 set -e
 
+COMMAND=$1
+
+function build_project() {
+    pushd Nowsecure
+    npm run pre-package
+    popd
+}
+
+if [[ -z "${COMMAND}" ]]; then
+    echo """
+    Please provide a command argument to the script
+
+    'package' will create a local .vsix file but not attempt publishing
+
+    'publish' will create a local .vsix file and attempt to publish with
+    the provided ENV and TOKEN variable
+    """
+    sleep 1
+    exit 1
+fi
+
 if [[ -z "${ENV}" ]]; then
 
     echo """
@@ -15,6 +36,25 @@ if [[ -z "${ENV}" ]]; then
     sleep 1
     exit 1
 fi
+
+
+if [[ "${COMMAND}" == "package" ]]; then
+
+    OVERRIDES=""
+    if [[ "${ENV}" == "PROD" ]]; then
+        OVERRIDES="--overrides-file prod-overrides.json"
+    fi
+
+    build_project
+
+    tfx extension create \
+        --manifest-globs vss-extension.json \
+        $OVERRIDES \
+
+    sleep 1
+    exit
+fi
+
 
 if [[ -z "${TOKEN}" ]]; then
      echo """
@@ -32,11 +72,7 @@ if [[ "${ENV}" == "PROD" ]]; then
     OVERRIDES="--overrides-file prod-overrides.json"
 fi
 
-npm ci
-pushd Nowsecure
-npm ci
-tsc --skipLibCheck
-popd
+build_project
 
 tfx extension publish \
     --manifest-globs vss-extension.json \

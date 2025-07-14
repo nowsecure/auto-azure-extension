@@ -3,7 +3,7 @@
     "id": "azure-nowsecure-auto-security-test-qa",
     "name": "azure-nowsecure-auto-security-test",
     "description": "Azure Extension for NowSecure Auto Security Test",
-    "version": "2.0.31",
+    "version": "2.0.32",
     "publisher": "qa-nowsecure",
     "targets": [
         {

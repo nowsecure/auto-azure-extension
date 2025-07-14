@@ -1,13 +1,12 @@
 {
   "name": "ns-plugin",
-  "version": "2.0.31",
+  "version": "2.0.32",
   "description": "Node wrapper for nowsecure-ci binary",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --skipLibCheck",
-    "package": "npm ci && npm run build",
-    "publish": "tfx extension create --manifest-globs vss-extension.json"
+    "pre-package": "npm ci && npm run build"
   },
   "keywords": [],
   "author": "",

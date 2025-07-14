@@ -3,13 +3,24 @@ import tr = require("azure-pipelines-task-lib/toolrunner");
 import fs = require("fs");
 import path = require("path");
 
-enum Arch {
-  X86,
-  X64,
-  ARM
+const enum Arch {
+  X86 = "x86",
+  X64 = "amd64",
+  ARM = "arm"
 }
 
-function makeExecutable(toolPath: string, platform: tl.Platform) {
+function platformToString(platform: tl.Platform) {
+  switch (platform) {
+    case tl.Platform.Windows:
+      return "windows";
+    case tl.Platform.Linux:
+      return "linux";
+    case tl.Platform.MacOS:
+      return "darwin";
+  }
+}
+
+function chmodx(toolPath: string, platform: tl.Platform) {
   if (platform !== tl.Platform.Windows) {
     tl.execSync("chmod", ["u+x", toolPath])
   } else {
@@ -32,6 +43,11 @@ function archFrom(envvar: string): Arch {
   }
 }
 
+function toolName(arch: Arch, platform: tl.Platform): string {
+  // Ex: ns_linux-amd64
+  return `ns_${platformToString(platform)}-${arch}${platform === tl.Platform.Windows ? '.exe' : ''}`
+}
+
 function getTool(): tr.ToolRunner {
   const platform = tl.getPlatform()
   const arch = archFrom(tl.getVariable("Agent.OSArchitecture"))
@@ -43,11 +59,9 @@ function getTool(): tr.ToolRunner {
     throw new Error(err)
   }
 
-  const toolPath = platform === tl.Platform.Windows ?
-    path.join(__dirname, "ns.exe") :
-    path.join(__dirname, "ns")
+  const toolPath = path.join(__dirname, toolName(arch, platform));
 
-  makeExecutable(toolPath, platform)
+  chmodx(toolPath, platform)
 
   return tl.tool(toolPath)
 }
@@ -119,17 +133,17 @@ async function run() {
   });
 
   let exitCode: number
-  try {
-    exitCode = await ns.execAsync()
-  } catch (err) {
-    const errmsg = `azure-nowsecure-auto-security-test upload and security test failed [ ${err} ]`
-    tl.setResult(tl.TaskResult.Failed, errmsg)
-  }
+  exitCode = await ns.execAsync()
 
   if (exitCode != 0) {
-    const errmsg = "azure-nowsecure-auto-security-test upload and security test failed."
+    const errmsg = "NowSecure extension failed with nonzero exitcode"
     tl.setResult(tl.TaskResult.Failed, errmsg)
   }
 }
 
-run()
+try {
+  run()
+} catch (err) {
+  const errmsg = `NowSecure extension failed with error: [ ${err} ]`
+  tl.setResult(tl.TaskResult.Failed, errmsg)
+}
