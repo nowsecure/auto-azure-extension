@@ -51,15 +51,15 @@ function toolName(arch: Arch, platform: tl.Platform): string {
 function getTool(): tr.ToolRunner {
   const platform = tl.getPlatform()
   const arch = archFrom(tl.getVariable("Agent.OSArchitecture"))
+  const toolPath = path.join(__dirname, toolName(arch, platform));
 
-  if (arch !== Arch.X64) {
-    const err = "Unsupported runner architecture"
+  if (!fs.existsSync(toolPath)) {
+    const err =
+      "Unsupported runner type. Integration currently supports darwin/arm64, windows/amd64, and linux/amd64"
     tl.error(err)
     tl.setResult(tl.TaskResult.Failed, err)
     throw new Error(err)
   }
-
-  const toolPath = path.join(__dirname, toolName(arch, platform));
 
   chmodx(toolPath, platform)
 
