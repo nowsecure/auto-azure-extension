@@ -1,34 +1,40 @@
-# Azure DevOps Extension for NowSecure Auto Security Test
-
-## Marketplace URL for Installation and Download to TFS/Azure DevOps Server:
-- [https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.azure-nowsecure-auto-security-test]
+# Azure DevOps Extension for NowSecure 
 
 ## Development
-- install node
-- npm install -g tfx-cli
-- cd Nowsecure
-- npm install
 
-Edit task.json to update version
+### Dependencies
+- node
+- tfx-cli
+- typescript
 
-Edit index.ts to update business logic/params
+### Making Changes
 
-Finally, run
+The core functionality is handled by the `nowsecure-ci` golang binary. The logic in `Nowsecure/index.ts` is merely a wrapper around that binary file.
+
+To adjust any of the inputs / default values edit the `Nowsecure/task.json`
+
+To adjust any of the wrapper logic, edit `Nosecure/index.ts`
+
+### Building
+
+There is a convenience bash script, `publish` which can handle packaging and publishing the ADO extension. 
+
+To package for testing in the QA environment, run the following:
+
+``` shell
+ENV=QA ./publish package
 ```
-  tsc
+
+This will create a `.vsix` file which can be uploaded to the [QA storefront](https://marketplace.visualstudio.com/manage/publishers/qa-nowsecure?src=qa-nowsecure.azure-nowsecure-auto-security-test-qa) 
+
+## Deploying
+This should be handled automatically by a Github Action in the future, but the bash script in this repo can also publish directly to the [public storefront](https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.azure-nowsecure-auto-security-test)
+
+```
+ENV=PROD TOKEN=<some-token> ./publish publish
 ```
 
-Note: It uses same core Java code that is used by the CircleCI (https://github.com/nowsecure/auto-circleci-plugin)
-
-
-## Deploy
-```
-  cd Nowsecure && npm install && tsc;cd .. && tfx extension create --rev-version --manifest-globs vss-extension.json
-```
-
-Then upload extension (vsix) to https://marketplace.visualstudio.com/manage/publishers/nowsecure-com?noPrompt=true
-
-### Installation
+### Usage Overview
 
 See [Overview documentation](overview.md)
 
