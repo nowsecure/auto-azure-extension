@@ -1,7 +1,7 @@
-import tl = require("azure-pipelines-task-lib/task");
-import tr = require("azure-pipelines-task-lib/toolrunner");
-import fs = require("fs");
-import path = require("path");
+import *  as tl from "azure-pipelines-task-lib/task";
+import { ToolRunner } from "azure-pipelines-task-lib/toolrunner";
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
 
 const enum Arch {
   X86 = "x86",
@@ -37,8 +37,7 @@ function archFrom(envvar: string): Arch {
     case "ARM":
       return Arch.ARM
     default:
-      const emsg = "Unknown system architecture"
-      tl.setResult(tl.TaskResult.Failed, emsg)
+      const emsg = `Unknown system architecture: ${envvar}`
       throw new Error(emsg)
   }
 }
@@ -48,16 +47,14 @@ function toolName(arch: Arch, platform: tl.Platform): string {
   return `ns_${platformToString(platform)}-${arch}${platform === tl.Platform.Windows ? '.exe' : ''}`
 }
 
-function getTool(): tr.ToolRunner {
+function getTool(): ToolRunner {
   const platform = tl.getPlatform()
   const arch = archFrom(tl.getVariable("Agent.OSArchitecture"))
-  const toolPath = path.join(__dirname, toolName(arch, platform));
+  const toolPath = join(__dirname, toolName(arch, platform));
 
-  if (!fs.existsSync(toolPath)) {
+  if (!existsSync(toolPath)) {
     const err =
       "Unsupported runner type. Integration currently supports darwin/arm64, windows/amd64, and linux/amd64"
-    tl.error(err)
-    tl.setResult(tl.TaskResult.Failed, err)
     throw new Error(err)
   }
 
@@ -84,8 +81,8 @@ type Inputs = {
 function getInputs(): Inputs {
   const inputs = {
     filepath: tl.getPathInputRequired("binary_file", true),
-    group: tl.getInput("group", true),
-    token: tl.getInput("token", true),
+    group: tl.getInputRequired("group"),
+    token: tl.getInputRequired("token"),
     // optional params
     artifact_dir: tl.getInput("artifact_dir", false),
     api_host: tl.getInput("api_host", false),
@@ -106,7 +103,7 @@ function getInputs(): Inputs {
 }
 
 async function run() {
-  const task = JSON.parse(fs.readFileSync(path.join(__dirname, "task.json")).toString());
+  const task = JSON.parse(readFileSync(join(__dirname, "task.json")).toString());
   const version = `${task.version.Major}.${task.version.Minor}.${task.version.Patch}`
 
   const inputs = getInputs()
@@ -119,7 +116,7 @@ async function run() {
     .arg(inputs.filepath)
     .line(`--group-ref ${inputs.group}`)
     .line(`--token ${inputs.token}`)
-    .line(`--output ${path.join(inputs.artifact_dir, "assessment.json")}`)
+    .line(`--output ${join(inputs.artifact_dir, "assessment.json")}`)
     .line(`--api-host ${inputs.api_host}`)
     .line(`--ui-host ${inputs.ui_host}`)
     .line(`--log-level ${inputs.log_level}`)
@@ -136,14 +133,13 @@ async function run() {
   exitCode = await ns.execAsync()
 
   if (exitCode != 0) {
-    const errmsg = "NowSecure extension failed with nonzero exitcode"
-    tl.setResult(tl.TaskResult.Failed, errmsg)
+    const errorMessage = `NowSecure extension failed with exit code: ${exitCode}`
+    tl.setResult(tl.TaskResult.Failed, errorMessage, true)
   }
 }
 
 try {
   run()
 } catch (err) {
-  const errmsg = `NowSecure extension failed with error: [ ${err} ]`
-  tl.setResult(tl.TaskResult.Failed, errmsg)
+  tl.setResult(tl.TaskResult.Failed, err.message, true)
 }
