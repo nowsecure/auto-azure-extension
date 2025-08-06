@@ -28,7 +28,7 @@ Find it in [Azure Devops Marketplace](https://marketplace.visualstudio.com/azure
 
 Then install it following [Microsoft's instructions](https://learn.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops) on installing Azure Devops Marketplace extensions.
 
-*NOTE:* Currently, compatibility is limited to Windows or Linux platforms running an X64 architecture. In order for the extension to work, please make sure you have an appropriate `vmImage`. 
+*NOTE:* Currently, compatibility is limited to either Windows / Linux running an X64 architecture, or MacOS on ARM. In order for the extension to work, please make sure you have an appropriate `vmImage`. 
 
 ### Sample Configurations
 
