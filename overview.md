@@ -8,7 +8,7 @@ Migration to the new extension is straightforward:
 
 1. Update the task reference from `azure-nowsecure-auto-security-test@1` to `nowsecure-azure-ci-extension@0`.
 2. Review the parameters for the new extension taking care to evaluate the updated default values of parameters to ensure the meet your requirements.
-Take note of `analysis_type` which is a new parameters. This parameter allows you to run static only or full assessments.
+Take note of `analysis_type` which is a new parameter. This parameter allows you to run static only or full assessments.
 
 ### Original Content
 
