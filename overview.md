@@ -1,4 +1,17 @@
 ## Azure Extension for NowSecure Auto API
+
+### Deprecation Notice
+
+This Extension has been deprecated.  NowSecure strongly recommends migrating to the updated NowSecure Azure CI Extension which can be found in the [Azure DevOps Marketplace](https://marketplace.visualstudio.com/items?itemName=Nowsecure-com.nowsecure-azure-ci-extension).
+
+Migration to the new extension is straightforward:
+
+1. Update the task reference from `azure-nowsecure-auto-security-test@1` to `nowsecure-azure-ci-extension@0`.
+2. Review the parameters for the new extension taking care to evaluate the updated default values of parameters to ensure the meet your requirements.
+Take note of `analysis_type` which is a new parameter. This parameter allows you to run static only or full assessments.
+
+### Original Content
+
 This extension/plugin adds the ability to perform automatic mobile app security testing for Android and iOS mobile apps through the NowSecure AUTO test engine.
 
 ### Summary:
@@ -17,7 +30,6 @@ Following are parameters needed for the job:
 
 ### Access token
 API tokens can be created by logging into NowSecure AUTO and navigating to the Profile & Preferences page. Enter a Token Name in the Create AccessToken field and click the Create button. Also, we recommend using job variable and using that in your build instead of hard coding token in your build script.
-
 
 ### Installation
 
